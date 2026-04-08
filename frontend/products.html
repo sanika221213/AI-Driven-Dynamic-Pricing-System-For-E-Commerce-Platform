@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - AI Dynamic Pricing System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🤖 AI Pricing</h1>
+                <p>Dynamic Pricing System</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="products.html" class="nav-item active">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="competitors.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Competitors</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h2>Product Management</h2>
+                    <p>Manage products and optimize pricing strategies</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="showAddProductModal()">
+                        <i class="fas fa-plus"></i>
+                        Add Product
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Filters -->
+            <div class="card">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Search Products</label>
+                        <input type="text" class="form-control" id="searchInput" 
+                               placeholder="Search by name or category..." onkeyup="filterProducts()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category Filter</label>
+                        <select class="form-control" id="categoryFilter" onchange="filterProducts()">
+                            <option value="">All Categories</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Inventory Status</label>
+                        <select class="form-control" id="inventoryFilter" onchange="filterProducts()">
+                            <option value="">All</option>
+                            <option value="low">Low Stock (< 50)</option>
+                            <option value="medium">Medium Stock (50-100)</option>
+                            <option value="high">High Stock (> 100)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-box"></i> Products List
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Base Price</th>
+                                <th>Current Price</th>
+                                <th>Cost Price</th>
+                                <th>Inventory</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-plus-circle"></i> Add New Product
+            </div>
+            <form id="addProductForm" onsubmit="handleAddProduct(event)">
+                <div class="form-group">
+                    <label class="form-label">Product Name*</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Category*</label>
+                        <select class="form-control" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Home & Garden">Home & Garden</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Base Price*</label>
+                        <input type="number" class="form-control" name="base_price" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Cost Price*</label>
+                        <input type="number" class="form-control" name="cost_price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Inventory*</label>
+                        <input type="number" class="form-control" name="inventory" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" name="description" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddProductModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Add Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Price Modal -->
+    <div id="editPriceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-edit"></i> Update Product Price
+            </div>
+            <form id="editPriceForm" onsubmit="handleUpdatePrice(event)">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label class="form-label">Product Name</label>
+                    <input type="text" class="form-control" id="editProductName" readonly>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Current Price</label>
+                        <input type="number" class="form-control" id="editCurrentPrice" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Price*</label>
+                        <input type="number" class="form-control" id="editNewPrice" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reason for Change</label>
+                    <input type="text" class="form-control" id="editReason" placeholder="e.g., Manual adjustment, Promotion">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditPriceModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Price
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Optimize Price Modal -->
+    <div id="optimizePriceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-magic"></i> AI Price Optimization
+            </div>
+            <div id="optimizationResults">
+                <div class="spinner"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeOptimizePriceModal()">Cancel</button>
+                <button type="button" class="btn btn-success" id="applyOptimizationBtn" onclick="applyOptimization()" style="display:none;">
+                    <i class="fas fa-check"></i> Apply Optimization
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>

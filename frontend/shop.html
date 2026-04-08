@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Dynamic Pricing Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .shop-title h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin: 0;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-welcome {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .cart-btn {
+            position: relative;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .btn-secondary {
+            padding: 10px 20px;
+            background: #ef4444 !important;
+            color: white !important;
+            border: 2px solid transparent !important;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #dc2626 !important;
+            border-color: #b91c1c !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .product-category {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 10px 0;
+        }
+        
+        .product-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+        
+        .product-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: var(--bg-light);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+        
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .current-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+        
+        .base-price {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+        }
+        
+        .price-change {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .price-up {
+            background: #fee;
+            color: var(--danger-color);
+        }
+        
+        .price-down {
+            background: #efe;
+            color: var(--success-color);
+        }
+        
+        .stock-info {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        .stock-low {
+            color: var(--warning-color);
+            font-weight: 600;
+        }
+        
+        .stock-ok {
+            color: var(--success-color);
+        }
+        
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .add-to-cart-btn .btn-icon {
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .add-to-cart-btn .btn-text {
+            transition: all 0.3s ease;
+        }
+        
+        .add-to-cart-btn:hover {
+            background: white;
+            color: black;
+            border: 2px solid var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+        
+        .add-to-cart-btn:hover .btn-text {
+            color: black;
+        }
+        
+        .add-to-cart-btn:hover .btn-icon {
+            margin-right: 8px;
+            color: black;
+        }
+        
+        .add-to-cart-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .add-to-cart-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .viewing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: #fff3cd;
+            color: #856404;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Cart Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .cart-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .cart-header h2 {
+            color: var(--text-primary);
+        }
+        
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .cart-item-price {
+            color: var(--success-color);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .cart-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .qty-btn {
+            padding: 8px 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .qty-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+        
+        .remove-btn {
+            padding: 8px 12px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 5px;
+        }
+        
+        .remove-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+        
+        .remove-btn i {
+            font-size: 14px;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="shop-header">
+        <div class="shop-title">
+            <h1>🛒 Dynamic Pricing Store</h1>
+            <small style="color: var(--text-secondary);">Prices update in real-time based on demand!</small>
+        </div>
+        
+        <div class="user-info">
+            <span class="user-welcome">Welcome, <strong id="userName">Customer</strong></span>
+            <button class="cart-btn" onclick="openCart()">
+                🛒 Cart
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+            <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <!-- Search Bar -->
+    <div style="padding: 20px; background: white; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="max-width: 600px; margin: 0 auto; position: relative;">
+            <input type="text" 
+                   id="searchInput" 
+                   placeholder="🔍 Search for products..." 
+                   style="width: 100%; padding: 12px 45px 12px 15px; border: 2px solid var(--border-color); border-radius: 25px; font-size: 15px; outline: none; transition: all 0.3s;"
+                   onkeyup="handleSearch(event)"
+                   onfocus="this.style.borderColor='var(--primary-color)'"
+                   onblur="this.style.borderColor='var(--border-color)'">
+            <i class="fas fa-search" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 16px;"></i>
+        </div>
+        <div id="searchResults" style="max-width: 600px; margin: 10px auto 0; font-size: 13px; color: var(--text-secondary);"></div>
+    </div>
+    
+    <div class="products-grid" id="productsGrid">
+        <!-- Products will be loaded here -->
+    </div>
+    
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Your Shopping Cart</h2>
+                <span class="close-btn" onclick="closeCart()">&times;</span>
+            </div>
+            
+            <div id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
+            
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            
+            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script src="js/config.js?v=2"></script>
+    <script src="js/shop.js?v=2"></script>
+</body>
+</html>

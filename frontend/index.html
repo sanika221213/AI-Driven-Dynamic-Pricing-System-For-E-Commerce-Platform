@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Dynamic Pricing System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🤖 AI Pricing</h1>
+                <p>Dynamic Pricing System</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="competitors.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Competitors</span>
+                </a>
+                <a href="simulation.html" class="nav-item">
+                    <i class="fas fa-flask"></i>
+                    <span>Simulation</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="shop.html" class="nav-item" style="border-top: 1px solid var(--border-color); margin-top: 10px; padding-top: 20px;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Customer View</span>
+                </a>
+                <a href="login.html" class="nav-item" onclick="localStorage.clear()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h2>Dashboard Overview</h2>
+                    <p>Monitor your pricing performance and key metrics</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="refreshDashboard()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Total Revenue (30d)</span>
+                        <div class="stat-card-icon blue">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalRevenue">$0</div>
+                    <div class="stat-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span id="revenueChange">+0%</span> from last period
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Total Products</span>
+                        <div class="stat-card-icon green">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalProducts">0</div>
+                    <div class="stat-card-change">
+                        <span id="productsInfo">Active products</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Total Sales (30d)</span>
+                        <div class="stat-card-icon orange">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalSales">0</div>
+                    <div class="stat-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span id="salesChange">+0%</span> conversion rate
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Avg Price Change</span>
+                        <div class="stat-card-icon purple">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="avgPriceChange">0%</div>
+                    <div class="stat-card-change">
+                        <span id="priceChangeInfo">AI-optimized pricing</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Trend Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    Revenue Trend (Last 7 Days)
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Products Grid -->
+            <div class="card">
+                <div class="card-header flex-between">
+                    <span><i class="fas fa-box"></i> Product Performance</span>
+                    <a href="products.html" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Current Price</th>
+                                <th>Base Price</th>
+                                <th>Inventory</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="location.href='products.html'">
+                        <i class="fas fa-plus"></i>
+                        Add New Product
+                    </button>
+                    <button class="btn btn-warning" onclick="generateSampleData()">
+                        <i class="fas fa-database"></i>
+                        Generate Sample Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="location.href='analytics.html'">
+                        <i class="fas fa-chart-bar"></i>
+                        View Analytics
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

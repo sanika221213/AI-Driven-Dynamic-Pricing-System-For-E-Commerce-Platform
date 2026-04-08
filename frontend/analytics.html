@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - AI Dynamic Pricing System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🤖 AI Pricing</h1>
+                <p>Dynamic Pricing System</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="analytics.html" class="nav-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="competitors.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Competitors</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h2>Pricing Analytics</h2>
+                    <p>Analyze pricing performance and trends</p>
+                </div>
+                <div class="flex gap-2">
+                    <select class="form-control" id="timeRangeFilter" onchange="updateAnalytics()" style="width: 200px;">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="60">Last 60 Days</option>
+                        <option value="90">Last 90 Days</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="exportAnalytics()">
+                        <i class="fas fa-download"></i>
+                        Export Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Performance Metrics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Total Revenue</span>
+                        <div class="stat-card-icon blue">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="analyticsRevenue">$0</div>
+                    <div class="stat-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span id="revenueGrowth">+0%</span> growth
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Total Transactions</span>
+                        <div class="stat-card-icon green">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalTransactions">0</div>
+                    <div class="stat-card-change">
+                        <span id="avgTransactionValue">$0</span> avg value
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Conversion Rate</span>
+                        <div class="stat-card-icon orange">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="conversionRate">0%</div>
+                    <div class="stat-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Improved by AI</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Price Optimizations</span>
+                        <div class="stat-card-icon purple">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="priceChanges">0</div>
+                    <div class="stat-card-change">
+                        <span>AI-driven changes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line"></i>
+                        Revenue Trend
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-area"></i>
+                        Sales Volume
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesVolumeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie"></i>
+                        Revenue by Category
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryRevenueChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar"></i>
+                        Price vs Sales Correlation
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="priceCorrelationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Products Table -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-trophy"></i>
+                    Top Performing Products
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Revenue</th>
+                                <th>Units Sold</th>
+                                <th>Avg Price</th>
+                                <th>Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topProductsTable">
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sales History -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-history"></i>
+                    Recent Sales History
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesHistoryTable">
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/analytics.js"></script>
+</body>
+</html>

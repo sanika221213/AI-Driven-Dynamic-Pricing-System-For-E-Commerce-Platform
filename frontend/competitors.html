@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitors - AI Dynamic Pricing System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🤖 AI Pricing</h1>
+                <p>Dynamic Pricing System</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="competitors.html" class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Competitors</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h2>Competitor Monitoring</h2>
+                    <p>Track and analyze competitor pricing strategies</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="showAddCompetitorModal()">
+                        <i class="fas fa-plus"></i>
+                        Add Competitor Price
+                    </button>
+                    <button class="btn btn-success" onclick="refreshCompetitorData()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Summary Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Products Monitored</span>
+                        <div class="stat-card-icon blue">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="monitoredProducts">0</div>
+                    <div class="stat-card-change">
+                        <span>Actively tracked</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Competitors</span>
+                        <div class="stat-card-icon green">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalCompetitors">0</div>
+                    <div class="stat-card-change">
+                        <span>Tracked competitors</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Our Price Position</span>
+                        <div class="stat-card-icon orange">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="pricePosition">Neutral</div>
+                    <div class="stat-card-change">
+                        <span id="positionChange">vs market avg</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Last Updated</span>
+                        <div class="stat-card-icon purple">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="lastUpdate" style="font-size: 1.5rem;">--</div>
+                    <div class="stat-card-change">
+                        <span>Recent data</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-filter"></i>
+                    Select Product to Monitor
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Product</label>
+                        <select class="form-control" id="productSelector" onchange="loadCompetitorPrices()">
+                            <option value="">Select a product...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time Range</label>
+                        <select class="form-control" id="timeRange" onchange="loadCompetitorPrices()">
+                            <option value="7">Last 7 Days</option>
+                            <option value="14">Last 14 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Comparison Chart -->
+            <div class="card" id="comparisonCard" style="display:none;">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i>
+                    Price Comparison: <span id="selectedProductName"></span>
+                </div>
+                <div class="chart-container" style="height: 400px;">
+                    <canvas id="priceComparisonChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Competitor Prices Table -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-table"></i>
+                    Competitor Prices
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Competitor</th>
+                                <th>Their Price</th>
+                                <th>Our Price</th>
+                                <th>Difference</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody id="competitorPricesTable">
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    Select a product to view competitor prices
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Price Intelligence Insights -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-lightbulb"></i>
+                    AI Pricing Insights
+                </div>
+                <div id="pricingInsights">
+                    <div class="alert alert-info">
+                        <strong>💡 Tip:</strong> Select a product to see AI-powered pricing recommendations based on competitor analysis.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Competitor Price Modal -->
+    <div id="addCompetitorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-plus-circle"></i> Add Competitor Price
+            </div>
+            <form id="addCompetitorForm" onsubmit="handleAddCompetitorPrice(event)">
+                <div class="form-group">
+                    <label class="form-label">Product*</label>
+                    <select class="form-control" name="product_id" id="modalProductSelector" required>
+                        <option value="">Select a product...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Competitor Name*</label>
+                    <select class="form-control" name="competitor_name" required>
+                        <option value="">Select competitor...</option>
+                        <option value="Amazon">Amazon</option>
+                        <option value="eBay">eBay</option>
+                        <option value="Walmart">Walmart</option>
+                        <option value="BestBuy">BestBuy</option>
+                        <option value="Target">Target</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Competitor Price*</label>
+                    <input type="number" class="form-control" name="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product URL (Optional)</label>
+                    <input type="url" class="form-control" name="url" placeholder="https://...">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddCompetitorModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Add Price
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/competitors.js"></script>
+</body>
+</html>
